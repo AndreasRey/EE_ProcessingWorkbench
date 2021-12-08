@@ -1,0 +1,22 @@
+body {
+  padding: 15px;
+  font-size: 14px;
+}
+ul, ol { 
+  list-style: none;
+}
+#wrapper, #tableAnchor, #map {
+  border: 1px solid grey;
+}
+#wrapper {
+  max-height: 60vh;
+  overflow-y: scroll;
+}
+#map {
+  height: 100%;
+  max-width: 100%;
+}
+#tableAnchor {
+  padding: 15px;
+  margin-top: 15px;
+}

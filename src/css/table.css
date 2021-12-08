@@ -1,0 +1,13 @@
+div.dataTables_scrollBody {
+  margin-bottom: 15px !important;
+}
+.dataTables_wrapper td {
+  white-space: nowrap;
+  width: max-content;
+}
+.cell-centered {
+  text-align: center;
+}
+.dtsb-titleRow {
+  display: none;
+}
