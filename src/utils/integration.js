@@ -5,7 +5,7 @@ var keyBy = require('lodash.keyby');
 var each = require('lodash.foreach');
 
 // --> DICTIONARIES
-var sourceDictionaries = JSON.parse(fs.readFileSync('../../data/sources/Processing_dictionaries_geoJSON_8.geojson'));
+var sourceDictionaries = JSON.parse(fs.readFileSync('../../data/sources/Processing_polygons_dictionaries_geoJSON_9.geojson'));
 var dictionaries_props = sourceDictionaries.features.map(function (o) {
   return o.properties
 });
@@ -15,7 +15,7 @@ var dictionaries_output = keyBy(dictionaries_props, function (o) {
 fs.writeFileSync('../../data/results/dictionaries.json', JSON.stringify(dictionaries_output));
 
 // --> PROCESSINGS
-var sourceProcessings = JSON.parse(fs.readFileSync('../../data/sources/Processing_geoJSON_8.geojson'));
+var sourceProcessings = JSON.parse(fs.readFileSync('../../data/sources/Processing_polygons_GeoJSON_9.geojson'));
 
 var collections = []
 var tableRows = []
