@@ -5,8 +5,13 @@ import 'leaflet.fullscreen'
 import _ from '../lib/lodash-bundle'
 import Rainbow from 'rainbowvis.js'
 
+var colors = {
+  'Common': '#fcff18',
+  'ESA Only': '#4daf4a',
+  'Classified Only': '#e41a1c'
+}
+
 function map (data) {
-  console.log('map data', data)
   var aoi = L.geoJSON(data.aoi, {
     style: {
       color: '#000000',
@@ -36,6 +41,7 @@ function map (data) {
   var leafletMap = L.map('map', {
     layers: [Esri_WorldImagery, aoi, esa],
     maxBounds: esaBounds.pad(2),
+    maxZoom: 17,
     fullscreenControl: {
       position: 'topright',
       forcePseudoFullscreen: false // if true, fullscreen to page width and height
@@ -58,24 +64,96 @@ function map (data) {
   var myRainbow = new Rainbow();
   myRainbow.setSpectrum('#f70e0e', '#f7e60e', '#0ed2f7', '#c20ef7');
   myRainbow.setNumberRange(0, data.layers.length);
+
+  var wrapLayerName = function (name) {
+    return `<span class="layerControlGroup">${name}</span>`
+  }
   _.each(data.layers, function (v, i) {
-    var layerName = v.features[0].properties.classifier;
-    var color = '#' + myRainbow.colorAt(i)
-    var layer = L.geoJSON(v, {
-      style: {
-        color: color,
-        opacity: 1,
-        weight: 2,
-        fill: true,
-        fillColor: color,
-        fillOpacity: 0.3
+    var layerName = v.features[0].properties.classifier + ' | Zones';
+    var layerGeoJSON = L.geoJSON(v, {
+      style: function (feature) {
+        var color = colors[feature.properties.type]
+        return {
+          color: 'white',
+          opacity: 1,
+          weight: 0,
+          fill: true,
+          fillColor: color,
+          fillOpacity: 0.4
+        }
+      },
+      onEachFeature: function (feature, layer) {
+        layer.bindPopup('<b>' + layerName + '</b><br>' + feature.properties.type)
       }
     });
-    layer.bindPopup(layerName)
-    overlayMaps[layerName] = layer
-  })
+    overlayMaps[wrapLayerName(layerName)] = layerGeoJSON
 
+    var fullLayerName = v.features[0].properties.classifier + ' | Full';
+    var fullColor = '#' + myRainbow.colorAt(i)
+    var geojsonObject = _.cloneDeep(v)
+    geojsonObject.features = v.features.filter(function (o) { return o.properties.type !== 'ESA Only'})
+    var fullLayerGeoJSON = L.geoJSON(geojsonObject, {
+      style: {
+          color: fullColor,
+          opacity: 1,
+          weight: 0,
+          fill: true,
+          fillColor: fullColor,
+          fillOpacity: 0.3
+        }
+    });
+    fullLayerGeoJSON.bindPopup(fullLayerName)
+    overlayMaps[fullLayerName] = fullLayerGeoJSON
+  })
+  leafletMap.on('overlayadd', function (e) {
+    console.log(e)
+  })
+  leafletMap.on('overlayremove', function (e) {
+    console.log(e)
+  })
+  legend(leafletMap)
   L.control.layers(baseMaps, overlayMaps).addTo(leafletMap);
+}
+
+var legend = function (map) {
+  var legendItems = []
+  var legend = L.control({position: 'bottomright'});
+  legend.onAdd = function () {
+    this._div = L.DomUtil.create('div', 'leaflet-legend');
+    //this.update();
+    return this._div;
+  };
+  legend.update = function () {
+    this._div.innerHTML = ''
+    var div = this._div
+    _.each(legendItems, function (item, index) {
+      div.innerHTML += item.html
+      if (index !== legendItems.length - 1) { div.innerHTML += '<div class="leaflet-control-layers-separator-custom"></div>' }
+    })
+   return div
+  }
+  map.on('overlayadd', function (e) {
+    var name = e.name
+    var html
+    if (_.endsWith(name, '| Full') === true) {
+      html = '<span><i style="background-color:' + e.layer.options.style.color + '"></i> ' + name + '</span>'
+      legendItems.push({ name, html })
+    }
+    else if (_.endsWith(name, '| Zones</span>') === true) {
+      var displayName = _.replace(_.replace(name, '<span>', ''), '</span>', '')
+      html = '<span>' + displayName + '</span><br>'
+      html += '<span><i style="background-color:' + colors['Common'] + '"></i> ' + 'Common' + '</span><br>'
+      html += '<span><i style="background-color:' + colors['ESA Only'] + '"></i> ' + 'ESA Only' + '</span><br>'
+      html += '<span><i style="background-color:' + colors['Classified Only'] + '"></i> ' + 'Classified Only' + '</span>'
+      legendItems.push({ name, html })
+    }
+    legend.update()
+  })
+  map.on('overlayremove', function (e) {
+    legendItems = legendItems.filter(function (o) { return o.name !== e.name })
+    legend.update()
+  })
+  legend.addTo(map)
 }
 
 export default map
