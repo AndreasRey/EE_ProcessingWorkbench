@@ -22,8 +22,11 @@
     "jquery": "^3.6.0",
     "leaflet": "^1.7.1",
     "leaflet.fullscreen": "^2.2.0",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.endswith": "^4.2.1",
     "lodash.foreach": "^4.5.0",
     "lodash.keyby": "^4.6.0",
+    "lodash.replace": "^4.1.4",
     "rainbowvis.js": "^1.0.1"
   },
   "devDependencies": {
