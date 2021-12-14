@@ -5,9 +5,9 @@ import setTree from './js/tree';
 import setTable from './js/table';
 import setMap from './js/map';
 
-const dictionaries = require('../data/results/dictionaries.json');
-const tableRows = require('../data/results/processings.json');
-const layers = require('../data/results/layers.json');
+const dictionaries = require('../data/geometries_results/dictionaries.json');
+const tableRows = require('../data/geometries_results/processings.json');
+const layers = require('../data/geometries_results/layers.json');
 const aoi = require('../data/reference/aoi.json');
 const reference = require('../data/reference/reference.json');
 
