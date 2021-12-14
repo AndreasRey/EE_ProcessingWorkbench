@@ -39,7 +39,7 @@ function map (data) {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   });
   var leafletMap = L.map('map', {
-    layers: [Esri_WorldImagery, aoi, esa],
+    layers: [Esri_WorldImagery, aoi],
     maxBounds: esaBounds.pad(2),
     maxZoom: 17,
     fullscreenControl: {
@@ -58,7 +58,7 @@ function map (data) {
 
   var overlayMaps = {
     "Area of interest": aoi,
-    "ESA WorldCover 2020 (reference)": esa
+    "ESA WorldCover 2020": esa
   };
 
   var myRainbow = new Rainbow();
@@ -105,22 +105,18 @@ function map (data) {
     fullLayerGeoJSON.bindPopup(fullLayerName)
     overlayMaps[fullLayerName] = fullLayerGeoJSON
   })
-  leafletMap.on('overlayadd', function (e) {
-    console.log(e)
-  })
-  leafletMap.on('overlayremove', function (e) {
-    console.log(e)
-  })
   legend(leafletMap)
   L.control.layers(baseMaps, overlayMaps).addTo(leafletMap);
 }
 
 var legend = function (map) {
-  var legendItems = []
+  var legendItems = [
+    { name: 'Area of interest', html: '<span><b>Area of interest</b></span><br><span class="legend-item"><i style="background-color:' + 'rgba(0,0,0,0)' + ';border-color:black;border-width:2px;border-style:solid;"></i></span><br>' }
+  ]
   var legend = L.control({position: 'bottomright'});
   legend.onAdd = function () {
     this._div = L.DomUtil.create('div', 'leaflet-legend');
-    //this.update();
+    this.update();
     return this._div;
   };
   legend.update = function () {
@@ -136,15 +132,26 @@ var legend = function (map) {
     var name = e.name
     var html
     if (_.endsWith(name, '| Full') === true) {
-      html = '<span><i style="background-color:' + e.layer.options.style.color + '"></i> ' + name + '</span>'
+      html = '<span><b>' + name + '</b></span><br>'
+      html += '<span class="legend-item"><i style="background-color:' + e.layer.options.style.color + '"></i></span><br>'
       legendItems.push({ name, html })
     }
     else if (_.endsWith(name, '| Zones</span>') === true) {
       var displayName = _.replace(_.replace(name, '<span>', ''), '</span>', '')
-      html = '<span>' + displayName + '</span><br>'
-      html += '<span><i style="background-color:' + colors['Common'] + '"></i> ' + 'Common' + '</span><br>'
-      html += '<span><i style="background-color:' + colors['ESA Only'] + '"></i> ' + 'ESA Only' + '</span><br>'
-      html += '<span><i style="background-color:' + colors['Classified Only'] + '"></i> ' + 'Classified Only' + '</span>'
+      html = '<span><b>' + displayName + '</b></span><br>'
+      html += '<span class="legend-item"><i style="background-color:' + colors['Common'] + '"></i> ' + 'Common' + '</span><br>'
+      html += '<span class="legend-item"><i style="background-color:' + colors['ESA Only'] + '"></i> ' + 'ESA Only' + '</span><br>'
+      html += '<span class="legend-item"><i style="background-color:' + colors['Classified Only'] + '"></i> ' + 'Classified Only' + '</span><br>'
+      legendItems.push({ name, html })
+    }
+    else if (name === 'Area of interest') {
+      html = '<span><b>' + name + '</b></span><br>'
+      html += '<span class="legend-item"><i style="background-color:' + 'rgba(0,0,0,0)' + ';border-color:black;border-width:2px;border-style:solid;"></i></span><br>'
+      legendItems.push({ name, html })
+    }
+    else if (name === 'ESA WorldCover 2020') {
+      html = '<span><b>' + name + '</b></span><br>'
+      html += '<span class="legend-item"><i style="background-color:' + '#11ff45' + ';border-color:#11ff45;border-width:2px;border-style:solid;"></i></span><br>'
       legendItems.push({ name, html })
     }
     legend.update()
