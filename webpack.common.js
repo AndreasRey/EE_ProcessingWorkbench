@@ -57,13 +57,11 @@ module.exports = {
       title: 'EE Processing Workbench',
       template: './template.html'
     }),
-    // new CopyPlugin({
-    //   patterns: [
-    //      './src/img/favicon.ico',
-    //   //   { from: './data/reference', to: 'data/reference' },
-    //   //   { from: './data/results', to: 'data/results' },
-    //   ],
-    // }),
+    new CopyPlugin({
+      patterns: [
+        { from: './src/data/', to: './data/' }
+      ]
+    }),
     new MomentLocalesPlugin()
   ]
 };
