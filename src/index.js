@@ -58,10 +58,8 @@ function access (processingTitle) {
     setTree(dictionaries);
 
     var headers = [];
-    _.each(tableRows[0], function (v, k) {
-      if (['classifier', 'region', 'enddate', 'startdate'].indexOf(k) === -1) {
-        headers.push({ data: k, title: k});
-      }
+    _.each(['image','bandsid','classifierid','train_accuracy','validate_accuracy','scale','period','subregion','area_esa','common_area','area_classification','min_esa','min_classification','mean_esa','mean_classification','max_esa','max_classification','stddev_esa','stddev_classification'], function (v) {
+      headers.push({ data: v, title: v});
     })
     $('#loading').hide();
     $('#presentation').show();
