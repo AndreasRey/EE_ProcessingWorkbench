@@ -10,7 +10,7 @@ function setTree (data) {
 
   // Expand all (or selected) child nodes of root (optional)
   tree.expand(function(node) {
-  return node.childNodes.length < 2 || node.label === 'phoneNumbers';
+  return node.childNodes.length < 2;
   });
 }
 
