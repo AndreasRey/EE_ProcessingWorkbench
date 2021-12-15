@@ -55,3 +55,18 @@ ul, ol {
 .legend-item i {
   opacity: 0.5;
 }
+.home-content {
+  max-width: fit-content;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 15%;
+}
+#loading {
+  display: unset;
+}
+#home {
+  display: none;
+}
+#presentation {
+  display: none;
+}
