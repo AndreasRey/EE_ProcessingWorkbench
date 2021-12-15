@@ -50,13 +50,14 @@ function integrateExports (source_AoI, source_ESA, source_dictionnaries, source_
   var sourceProcessings = JSON.parse(fs.readFileSync(`../../eeExports/${source_data}`));
   var collections = []
   var tableRows = []
+  var layers = {}
   each(sourceProcessings.features, function (feature) {
     var classifier = feature.properties.classifierid;
-    var features = []
-    features.push(geojson.feature(feature.properties.intersection, { classifier: classifier, type: 'Common' }));
-    features.push(geojson.feature(feature.properties.diff_esa, { classifier: classifier, type: 'ESA Only' }));
-    features.push(geojson.feature(feature.properties.diff, { classifier: classifier, type: 'Classified Only' }));
-    collections.push(geojson.collection(features));
+    if (!layers[classifier]) {layers[classifier] = []}
+    layers[classifier].push(geojson.feature(feature.properties.intersection, { classifier: classifier, type: 'Common' }));
+    layers[classifier].push(geojson.feature(feature.properties.diff_esa, { classifier: classifier, type: 'ESA Only' }));
+    layers[classifier].push(geojson.feature(feature.properties.diff, { classifier: classifier, type: 'Classified Only' }));
+    
     var row = {};
     each(feature.properties, function (v, k) {
       if (['intersection', 'diff', 'diff_esa'].indexOf(k) === -1) {
@@ -64,6 +65,9 @@ function integrateExports (source_AoI, source_ESA, source_dictionnaries, source_
       }
     });
     tableRows.push(row);
+  })
+  each(layers, function (features) {
+    collections.push(geojson.collection(features));
   })
   fs.writeFileSync(`../data/${outputFolder}/results/processings.json`, JSON.stringify(tableRows));
   fs.writeFileSync(`../data/${outputFolder}/results/layers.json`, JSON.stringify(collections));
