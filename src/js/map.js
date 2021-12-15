@@ -79,7 +79,7 @@ function map (data) {
           weight: 0,
           fill: true,
           fillColor: color,
-          fillOpacity: 0.4
+          fillOpacity: 0.6
         }
       },
       onEachFeature: function (feature, layer) {
@@ -99,7 +99,7 @@ function map (data) {
           weight: 0,
           fill: true,
           fillColor: fullColor,
-          fillOpacity: 0.3
+          fillOpacity: 0.6
         }
     });
     fullLayerGeoJSON.bindPopup(fullLayerName)
