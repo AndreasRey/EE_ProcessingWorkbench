@@ -113,7 +113,7 @@ var legend = function (map) {
   var legendItems = [
     { name: 'Area of interest', html: '<span><b>Area of interest</b></span><br><span class="legend-item"><i style="background-color:' + 'rgba(0,0,0,0)' + ';border-color:black;border-width:2px;border-style:solid;"></i></span><br>' }
   ]
-  var legend = L.control({position: 'bottomright'});
+  var legend = L.control({position: 'bottomleft'});
   legend.onAdd = function () {
     this._div = L.DomUtil.create('div', 'leaflet-legend');
     this.update();
