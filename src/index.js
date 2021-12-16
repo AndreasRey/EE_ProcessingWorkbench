@@ -26,7 +26,7 @@ $.getJSON('./data/list.json', function (list) {
     $('#list-anchor').html(displayList);
     $('#start-button').on('click', function () {
       var processingTitle = $('#processing-selection').val()
-      window.open(window.location.origin + '/#' + processingTitle, '_blank');
+      window.open(window.location.origin + window.location.pathname + '#' + processingTitle, '_blank');
     })
     $('#home').show();
     $('#loading').hide();
@@ -35,7 +35,7 @@ $.getJSON('./data/list.json', function (list) {
     if (list.indexOf(hashValue) !== -1) {
       access(hashValue)
     } else {
-      window.location.href = window.location.origin
+      window.location.href = window.location.origin + window.location.pathname
     }
   }
 })
