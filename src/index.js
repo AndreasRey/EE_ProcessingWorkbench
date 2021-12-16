@@ -26,8 +26,7 @@ $.getJSON('./data/list.json', function (list) {
     $('#list-anchor').html(displayList);
     $('#start-button').on('click', function () {
       var processingTitle = $('#processing-selection').val()
-      window.location.hash = processingTitle
-      access(processingTitle)
+      window.open(window.location.origin + '/#' + processingTitle, '_blank');
     })
     $('#home').show();
     $('#loading').hide();
@@ -44,6 +43,7 @@ $.getJSON('./data/list.json', function (list) {
 
 
 function access (processingTitle) {
+  window.location.hash = processingTitle
   $('#loading-modal-title').html('Retrieving processing results')
   $('#loading').show();
   $('#home').hide();
