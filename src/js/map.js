@@ -12,25 +12,30 @@ var colors = {
 }
 
 function map (data) {
-  var aoi = L.geoJSON(data.aoi, {
-    style: {
-      color: '#000000',
-      opacity: 1,
-      weight: 2,
-      fill: false
-    }
-  });
-  var esa = L.geoJSON(data.reference, {
-    style: {
-      color: '#11ff45',
-      opacity: 1,
-      weight: 2,
-      fill: true,
-      fillColor: '#11ff45',
-      fillOpacity: 0.2
-    }
-  });
-  var esaBounds = esa.getBounds()
+  if (data.aoi) {
+    var aoi = L.geoJSON(data.aoi, {
+      style: {
+        color: '#000000',
+        opacity: 1,
+        weight: 2,
+        fill: false
+      }
+    });
+  }
+  if (data.reference) {
+    var esa = L.geoJSON(data.reference, {
+      style: {
+        color: '#11ff45',
+        opacity: 1,
+        weight: 2,
+        fill: true,
+        fillColor: '#11ff45',
+        fillOpacity: 0.2
+      }
+    });
+  }
+
+//  var esaBounds = esa.getBounds()
   var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
   });
@@ -38,28 +43,31 @@ function map (data) {
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   });
+  var layers = [Esri_WorldImagery]
+  if (data.aoi) { layers.push(aoi) }
   var leafletMap = L.map('map', {
-    layers: [Esri_WorldImagery, aoi],
-    maxBounds: esaBounds.pad(2),
+    layers: layers,
+//    maxBounds: esaBounds.pad(2),
     maxZoom: 17,
     fullscreenControl: {
       position: 'topright',
       forcePseudoFullscreen: false // if true, fullscreen to page width and height
     }
   })
-  leafletMap.fitBounds(aoi.getBounds())
+  if (data.aoi) {
+    leafletMap.fitBounds(aoi.getBounds())
+  } else {
+    leafletMap.fitBounds([[13.4, -16.4], [13.7, -15.4]])
+  }
 
   var baseMaps = {
     "Esri_WorldImagery": Esri_WorldImagery,
     "OpenStreetMap_Mapnik": OpenStreetMap_Mapnik
   };
 
-
-
-  var overlayMaps = {
-    "Area of interest": aoi,
-    "ESA WorldCover 2020": esa
-  };
+  var overlayMaps = {};
+  if (data.aoi) { overlayMaps['Area of interest'] = aoi; }
+  if (data.reference) { overlayMaps['ESA WorldCover 2020'] = esa; }
 
   var myRainbow = new Rainbow();
   myRainbow.setSpectrum('#f70e0e', '#f7e60e', '#0ed2f7', '#c20ef7');
@@ -68,25 +76,30 @@ function map (data) {
   var wrapLayerName = function (name) {
     return `<span class="layerControlGroup">${name}</span>`
   }
+
+  console.log('data.layers', data.layers)
+
   _.each(data.layers, function (v, i) {
-    var layerName = v.features[0].properties.classifier + ' | Zones';
-    var layerGeoJSON = L.geoJSON(v, {
-      style: function (feature) {
-        var color = colors[feature.properties.type]
-        return {
-          color: 'white',
-          opacity: 1,
-          weight: 0,
-          fill: true,
-          fillColor: color,
-          fillOpacity: 0.6
+    if (data.esa) {
+      var layerName = v.features[0].properties.classifier + ' | Zones';
+      var layerGeoJSON = L.geoJSON(v, {
+        style: function (feature) {
+          var color = colors[feature.properties.type]
+          return {
+            color: 'white',
+            opacity: 1,
+            weight: 0,
+            fill: true,
+            fillColor: color,
+            fillOpacity: 0.6
+          }
+        },
+        onEachFeature: function (feature, layer) {
+          layer.bindPopup('<b>' + layerName + '</b><br>' + feature.properties.type)
         }
-      },
-      onEachFeature: function (feature, layer) {
-        layer.bindPopup('<b>' + layerName + '</b><br>' + feature.properties.type)
-      }
-    });
-    overlayMaps[wrapLayerName(layerName)] = layerGeoJSON
+      });
+      overlayMaps[wrapLayerName(layerName)] = layerGeoJSON
+    }
 
     var fullLayerName = v.features[0].properties.classifier + ' | Full';
     var fullColor = '#' + myRainbow.colorAt(i)
@@ -105,14 +118,13 @@ function map (data) {
     fullLayerGeoJSON.bindPopup(fullLayerName)
     overlayMaps[fullLayerName] = fullLayerGeoJSON
   })
-  legend(leafletMap)
+  legend(leafletMap, data)
   L.control.layers(baseMaps, overlayMaps).addTo(leafletMap);
 }
 
-var legend = function (map) {
-  var legendItems = [
-    { name: 'Area of interest', html: '<span><b>Area of interest</b></span><br><span class="legend-item"><i style="background-color:' + 'rgba(0,0,0,0)' + ';border-color:black;border-width:2px;border-style:solid;"></i></span><br>' }
-  ]
+var legend = function (map, data) {
+  var legendItems = []
+  if (data.aoi) { legendItems.push({ name: 'Area of interest', html: '<span><b>Area of interest</b></span><br><span class="legend-item"><i style="background-color:' + 'rgba(0,0,0,0)' + ';border-color:black;border-width:2px;border-style:solid;"></i></span><br>' }) }
   var legend = L.control({position: 'bottomleft'});
   legend.onAdd = function () {
     this._div = L.DomUtil.create('div', 'leaflet-legend');

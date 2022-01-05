@@ -10,13 +10,15 @@ var s_dt = require( 'datatables.net-searchbuilder-bs5');
  * @param {Array} data Collection of records objects, eg: [{"name": "IK", "count": "1"}, {"name": "SG", "count": "1"}]
  * @param {Array} columns Collection of headers objects, refers to the data obj. eg: [{"data": "name", "title": "Name"}, {"data": "count", "title": "Count"}]
  */
-var table = function (data, columns) {
+var table = function (data, columns, length) {
+  var pageLength = length ? length : 10;
   // Define DataTable options, see : https://datatables.net/reference/option/
   $('#table').DataTable({
     dom: 'Qtfrlip',
     data: data,
     columns: columns,
     scrollX: true,
+    pageLength: pageLength,
     // Table order, see : https://datatables.net/reference/option/colReorder.order
     order: [[0, "desc"]]
   })

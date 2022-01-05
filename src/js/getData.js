@@ -16,6 +16,12 @@ function getData (folder, callback) {
       if (remainingSources === 0) {
         callback(data)
       }
+    }).fail(function () {
+      data[key] = false
+      remainingSources--
+      if (remainingSources === 0) {
+        callback(data)
+      }
     })
   }
 
