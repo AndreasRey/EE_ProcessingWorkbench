@@ -67,7 +67,7 @@ function access (processingTitle) {
     console.log('tableRows', tableRows)
     var refRow = tableRows[0]
     var headers = [];
-    _.each(['image','bandsid','classifierid','train_accuracy','validate_accuracy','scale','period','subregion','area_esa','common_area','percent_of_esa','area_classification','area_sqkm','area_sqm','min_esa','min_classification','min','mean_esa','mean_classification','mean','max_esa','max_classification','max','stddev_esa','stddev_classification','stddev'], function (v) {
+    _.each(['image','bandsid','classifierid','train_accuracy','validate_accuracy','scale','period','subregion','area_esa','common_area','percent_of_esa','area_classification','area_sqkm','area_sqm','common_2020','common_2020_percent','min_esa','min_classification','min','mean_esa','mean_classification','mean','max_esa','max_classification','max','stddev_esa','stddev_classification','stddev'], function (v) {
       if (refRow[v]) { headers.push({ data: v, title: v}); }
     })
     $('#loading').hide();
