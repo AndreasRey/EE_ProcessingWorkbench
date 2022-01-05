@@ -55,15 +55,25 @@ function access (processingTitle) {
     var aoi = data.aoi
     var reference = data.reference
 
-    setTree(dictionaries);
-
+    if (dictionaries) { setTree(dictionaries); } else {
+      $('#tableAnchor').css('margin-top', '0');
+      $('#row-top').hide().html('');
+      $('#row-bottom').append(`
+        <div id="col-map" class="col">
+          <div id="map"></div>
+        </div>
+      `);
+    }
+    console.log('tableRows', tableRows)
+    var refRow = tableRows[0]
     var headers = [];
-    _.each(['image','bandsid','classifierid','train_accuracy','validate_accuracy','scale','period','subregion','area_esa','common_area','area_classification','min_esa','min_classification','mean_esa','mean_classification','max_esa','max_classification','stddev_esa','stddev_classification'], function (v) {
-      headers.push({ data: v, title: v});
+    _.each(['image','bandsid','classifierid','train_accuracy','validate_accuracy','scale','period','subregion','area_esa','common_area','percent_of_esa','area_classification','area_sqkm','area_sqm','min_esa','min_classification','min','mean_esa','mean_classification','mean','max_esa','max_classification','max','stddev_esa','stddev_classification','stddev'], function (v) {
+      if (refRow[v]) { headers.push({ data: v, title: v}); }
     })
     $('#loading').hide();
     $('#presentation').show();
-    setTable(tableRows, headers);
+    var tablePageLength = dictionaries ? false : 50;
+    setTable(tableRows, headers, tablePageLength);
     setMap({
       layers,
       aoi,
