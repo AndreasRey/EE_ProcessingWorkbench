@@ -16,35 +16,40 @@ function integrateExports (source_AoI, source_ESA, source_dictionnaries, source_
   }
 
   // --> AOI
-  var sourceAoI = JSON.parse(fs.readFileSync(`../../eeExports/${source_AoI}`));
-  var featuresAoI = sourceAoI.features.map(function (feature) {
-    return geojson.feature(feature.properties.geom, {
-      name: feature.properties.name
+  if (source_AoI) {
+    var sourceAoI = JSON.parse(fs.readFileSync(`../../eeExports/${source_AoI}`));
+    var featuresAoI = sourceAoI.features.map(function (feature) {
+      return geojson.feature(feature.properties.geom, {
+        name: feature.properties.name
+      })
     })
-  })
-  var collection_AoI = geojson.collection(featuresAoI);
-  fs.writeFileSync(`../data/${outputFolder}/reference/aoi.json`, JSON.stringify(collection_AoI));
+    var collection_AoI = geojson.collection(featuresAoI);
+    fs.writeFileSync(`../data/${outputFolder}/reference/aoi.json`, JSON.stringify(collection_AoI));  
+  }
 
   // --> ESA
-  var sourceESA = JSON.parse(fs.readFileSync(`../../eeExports/${source_ESA}`));
-  var featuresESA = sourceESA.features.map(function (feature) {
-    return geojson.feature(feature.properties.geom, {
-      name: feature.properties.name
+  if (source_ESA) {
+    var sourceESA = JSON.parse(fs.readFileSync(`../../eeExports/${source_ESA}`));
+    var featuresESA = sourceESA.features.map(function (feature) {
+      return geojson.feature(feature.properties.geom, {
+        name: feature.properties.name
+      })
     })
-  })
-  var collection_ESA = geojson.collection(featuresESA);
-  fs.writeFileSync(`../data/${outputFolder}/reference/reference.json`, JSON.stringify(collection_ESA));
-
+    var collection_ESA = geojson.collection(featuresESA);
+    fs.writeFileSync(`../data/${outputFolder}/reference/reference.json`, JSON.stringify(collection_ESA));  
+  }
 
   // --> DICTIONARIES
-  var sourceDictionaries = JSON.parse(fs.readFileSync(`../../eeExports/${source_dictionnaries}`));
-  var dictionaries_props = sourceDictionaries.features.map(function (o) {
-    return o.properties
-  });
-  var dictionaries_output = keyBy(dictionaries_props, function (o) {
-    return o.classifierid
-  });
-  fs.writeFileSync(`../data/${outputFolder}/results/dictionaries.json`, JSON.stringify(dictionaries_output));
+  if (source_dictionnaries) {
+    var sourceDictionaries = JSON.parse(fs.readFileSync(`../../eeExports/${source_dictionnaries}`));
+    var dictionaries_props = sourceDictionaries.features.map(function (o) {
+      return o.properties
+    });
+    var dictionaries_output = keyBy(dictionaries_props, function (o) {
+      return o.classifierid
+    });
+    fs.writeFileSync(`../data/${outputFolder}/results/dictionaries.json`, JSON.stringify(dictionaries_output));  
+  }
 
   // --> PROCESSINGS
   var sourceProcessings = JSON.parse(fs.readFileSync(`../../eeExports/${source_data}`));
@@ -52,15 +57,16 @@ function integrateExports (source_AoI, source_ESA, source_dictionnaries, source_
   var tableRows = []
   var layers = {}
   each(sourceProcessings.features, function (feature) {
-    var classifier = feature.properties.classifierid;
+    var classifier = feature.properties.classifierid ? feature.properties.classifierid : feature.properties.subregion + '_' + feature.properties.period ;
     if (!layers[classifier]) {layers[classifier] = []}
-    layers[classifier].push(geojson.feature(feature.properties.intersection, { classifier: classifier, type: 'Common' }));
-    layers[classifier].push(geojson.feature(feature.properties.diff_esa, { classifier: classifier, type: 'ESA Only' }));
-    layers[classifier].push(geojson.feature(feature.properties.diff, { classifier: classifier, type: 'Classified Only' }));
+    if (feature.properties.intersection) { layers[classifier].push(geojson.feature(feature.properties.intersection, { classifier: classifier, type: 'Common' })); }
+    if (feature.properties.diff_esa) { layers[classifier].push(geojson.feature(feature.properties.diff_esa, { classifier: classifier, type: 'ESA Only' })); }
+    if (feature.properties.diff) { layers[classifier].push(geojson.feature(feature.properties.diff, { classifier: classifier, type: 'Classified Only' })); }
+    if (feature.properties.croplands) { layers[classifier].push(geojson.feature(feature.properties.croplands, { classifier: classifier, type: 'Croplands' })); }
     
     var row = {};
     each(feature.properties, function (v, k) {
-      if (['intersection', 'diff', 'diff_esa'].indexOf(k) === -1) {
+      if (['intersection', 'diff', 'diff_esa', 'croplands'].indexOf(k) === -1) {
         row[k] = v
       }
     });
