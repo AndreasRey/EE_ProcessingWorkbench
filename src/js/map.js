@@ -77,8 +77,6 @@ function map (data) {
     return `<span class="layerControlGroup">${name}</span>`
   }
 
-  console.log('data.layers', data.layers)
-
   _.each(data.layers, function (v, i) {
     if (data.esa) {
       var layerName = v.features[0].properties.classifier + ' | Zones';
@@ -120,6 +118,7 @@ function map (data) {
   })
   legend(leafletMap, data)
   L.control.layers(baseMaps, overlayMaps).addTo(leafletMap);
+  return { leafletMap, overlayMaps }
 }
 
 var legend = function (map, data) {
