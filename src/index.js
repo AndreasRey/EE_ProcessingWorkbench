@@ -103,7 +103,7 @@ function access (processingTitle) {
       v.on('add', function () {
         var tableData = table.rows().data();
         _.each(tableData, function (row, index) {
-          var layerPrefix = `${row.subregion}_${row.period}`
+          var layerPrefix = row.classifierid ? row.classifierid : `${row.subregion}_${row.period}`
           if (_.startsWith(k, layerPrefix) === true) {
             table.row(`:eq(${index})`).select();
           }

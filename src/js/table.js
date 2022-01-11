@@ -31,12 +31,12 @@ var table = function (data, columns, length, rowClickCallback) {
   datatable.on('select', function (e, dt, type, indexes) {
       var rowData = datatable.rows(indexes).data().toArray();
       var obj = rowData[0];
-      var layerPrefix = `${obj.subregion}_${obj.period}`
+      var layerPrefix = obj.classifierid ? obj.classifierid : `${obj.subregion}_${obj.period}`
       rowClickCallback('select', rowData, layerPrefix)
   }).on('deselect', function (e, dt, type, indexes) {
       var rowData = datatable.rows(indexes).data().toArray();
       var obj = rowData[0];
-      var layerPrefix = `${obj.subregion}_${obj.period}`
+      var layerPrefix = obj.classifierid ? obj.classifierid : `${obj.subregion}_${obj.period}`
       rowClickCallback('deselect', rowData, layerPrefix)
   });
   return datatable;

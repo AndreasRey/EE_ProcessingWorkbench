@@ -107,7 +107,7 @@ function map (data) {
       style: {
           color: fullColor,
           opacity: 1,
-          weight: 0,
+          weight: 1,
           fill: true,
           fillColor: fullColor,
           fillOpacity: 0.6
