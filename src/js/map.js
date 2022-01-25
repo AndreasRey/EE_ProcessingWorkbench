@@ -34,6 +34,9 @@ function map (data) {
       }
     });
   }
+  if (data.refData) {
+    console.log('data.refData', data.refData)
+  }
 
 //  var esaBounds = esa.getBounds()
   var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -77,6 +80,19 @@ function map (data) {
     return `<span class="layerControlGroup">${name}</span>`
   }
 
+  _.each(data.refData, function (v, k) {
+    var layer = L.geoJSON(v, {
+      style: {
+        color: '#11ff45',
+        opacity: 1,
+        weight: 2,
+        fill: true,
+        fillColor: '#11ff45',
+        fillOpacity: 0.2
+      }
+    });
+    overlayMaps[wrapLayerName(k)] = layer;
+  });
   _.each(data.layers, function (v, i) {
     if (data.esa) {
       var layerName = v.features[0].properties.classifier + ' | Zones';
@@ -96,7 +112,7 @@ function map (data) {
           layer.bindPopup('<b>' + layerName + '</b><br>' + feature.properties.type)
         }
       });
-      overlayMaps[wrapLayerName(layerName)] = layerGeoJSON
+      overlayMaps[wrapLayerName(layerName)] = layerGeoJSON;
     }
 
     var fullLayerName = v.features[0].properties.classifier + ' | Full';

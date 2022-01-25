@@ -55,6 +55,7 @@ function access (processingTitle) {
     var layers = data.layers
     var aoi = data.aoi
     var reference = data.reference
+    var refData = data.refData
 
     if (dictionaries) { setTree(dictionaries); } else {
       // $('#tableAnchor').css('margin-top', '0');
@@ -86,7 +87,8 @@ function access (processingTitle) {
     var map = setMap({
       layers,
       aoi,
-      reference
+      reference,
+      refData
     });
     var table = setTable(tableRows, headers, tablePageLength, function (action, rowData, layerPrefix) {
       _.each(map.overlayMaps, function (v, k) {
