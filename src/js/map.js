@@ -85,7 +85,7 @@ function map (data) {
       style: {
         color: '#11ff45',
         opacity: 1,
-        weight: 2,
+        weight: 1,
         fill: true,
         fillColor: '#11ff45',
         fillOpacity: 0.2
