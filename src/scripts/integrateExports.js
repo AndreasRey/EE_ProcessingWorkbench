@@ -114,7 +114,7 @@ function integrateExports (source_AoI, source_ESA, source_dictionnaries, source_
   var content = fs.readdirSync('../data')
   var folders = content.filter(function (o) { return o.indexOf('.') === -1 })
   fs.writeFileSync(`../data/list.json`, JSON.stringify(folders));
-  var files = content.filter(function (o) { return o.indexOf('.') !== -1 });
+  var files = content.filter(function (o) { return o.indexOf('.') !== -1 && ['.gitkeep', 'list.json', 'refData.json'].indexOf(o) === -1 });
   fs.writeFileSync(`../data/refData.json`, JSON.stringify(files));
 }
 module.exports = integrateExports;
