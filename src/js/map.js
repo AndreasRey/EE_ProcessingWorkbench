@@ -60,7 +60,12 @@ function map (data) {
   if (data.aoi) {
     leafletMap.fitBounds(aoi.getBounds())
   } else {
-    leafletMap.fitBounds([[13.4, -16.4], [13.7, -15.4]])
+    var hash = window.location.hash;
+    if (hash.search("_NER_") !== -1) {
+      leafletMap.fitBounds([[12.98551108026185, 1.9099345155512133], [13.283742893336237, 2.4056925756231085]])
+    } else {
+      leafletMap.fitBounds([[13.4, -16.4], [13.7, -15.4]])
+    }
   }
 
   var baseMaps = {
@@ -88,7 +93,7 @@ function map (data) {
         weight: 1,
         fill: true,
         fillColor: '#11ff45',
-        fillOpacity: 0.2
+        fillOpacity: 0.4
       }
     });
     overlayMaps[wrapLayerName(k)] = layer;
