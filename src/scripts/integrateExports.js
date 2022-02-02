@@ -49,7 +49,7 @@ function integrateExports (source_AoI, source_ESA, source_dictionnaries, source_
       return o.properties
     });
     var dictionaries_output = keyBy(dictionaries_props, function (o) {
-      return o.classifierid
+      return o.classifierid ? o.classifierid : 'classifier'
     });
     fs.writeFileSync(`../data/${outputFolder}/results/dictionaries.json`, JSON.stringify(dictionaries_output));  
   }
